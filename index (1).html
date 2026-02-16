@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-section label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-section select,
+        .filter-section input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .employee-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .employee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .employee-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .employee-position {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-present {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-absent {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .salary-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .salary-paid {
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .salary-unpaid {
+            color: #f56565;
+            font-weight: 600;
+        }
+
+        .absence-days {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .absence-days strong {
+            color: #333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .btn-secondary {
+            background: #cbd5e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Employee Management System</h1>
+            <p class="subtitle">Track attendance and salary payments</p>
+        </header>
+
+        <div class="controls">
+            <div class="button-group">
+                <button class="btn-primary" onclick="openAddEmployeeModal()">➕ Add Employee</button>
+                <button class="btn-success" onclick="exportData()">📥 Export Data</button>
+                <button class="btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+            </div>
+
+            <div class="filter-section">
+                <label>Filter:</label>
+                <select id="statusFilter" onchange="filterEmployees()">
+                    <option value="all">All Status</option>
+                    <option value="present">Present Only</option>
+                    <option value="absent">Absent Only</option>
+                </select>
+
+                <select id="salaryFilter" onchange="filterEmployees()">
+                    <option value="all">All Salary Status</option>
+                    <option value="paid">Paid</option>
+                    <option value="unpaid">Unpaid</option>
+                </select>
+
+                <input type="text" id="searchInput" placeholder="Search by name..." oninput="filterEmployees()">
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Employees</h3>
+                <div class="number" id="totalEmployees">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Present Today</h3>
+                <div class="number" id="presentCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Absent Today</h3>
+                <div class="number" id="absentCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Salary Paid</h3>
+                <div class="number" id="paidCount">0</div>
+            </div>
+        </div>
+
+        <div class="employee-grid" id="employeeGrid"></div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div class="modal" id="addEmployeeModal">
+        <div class="modal-content">
+            <h2>Add New Employee</h2>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" id="employeeName" placeholder="Enter employee name">
+            </div>
+            <div class="form-group">
+                <label>Position:</label>
+                <input type="text" id="employeePosition" placeholder="Enter position">
+            </div>
+            <div class="form-group">
+                <label>Salary Amount:</label>
+                <input type="number" id="employeeSalary" placeholder="Enter salary amount">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeAddEmployeeModal()">Cancel</button>
+                <button class="btn-primary" onclick="addEmployee()">Add Employee</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark Absence Modal -->
+    <div class="modal" id="absenceModal">
+        <div class="modal-content">
+            <h2>Mark Absence</h2>
+            <div class="form-group">
+                <label>Date:</label>
+                <input type="date" id="absenceDate">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeAbsenceModal()">Cancel</button>
+                <button class="btn-danger" onclick="markAbsence()">Mark Absent</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let employees = [];
+        let currentEmployeeId = null;
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('employeeData');
+            if (saved) {
+                employees = JSON.parse(saved);
+            } else {
+                // Sample data
+                employees = [
+                    {
+                        id: 1,
+                        name: "Ahmed Hassan",
+                        position: "Manager",
+                        salary: 5000,
+                        salaryPaid: true,
+                        absenceDates: ["2024-02-10", "2024-02-15"]
+                    },
+                    {
+                        id: 2,
+                        name: "Sara Mohamed",
+                        position: "Developer",
+                        salary: 4000,
+                        salaryPaid: false,
+                        absenceDates: []
+                    },
+                    {
+                        id: 3,
+                        name: "Omar Ali",
+                        position: "Designer",
+                        salary: 3500,
+                        salaryPaid: true,
+                        absenceDates: ["2024-02-16"]
+                    }
+                ];
+            }
+            renderEmployees();
+            updateStats();
+        }
+
+        function saveData() {
+            localStorage.setItem('employeeData', JSON.stringify(employees));
+        }
+
+        function renderEmployees() {
+            const grid = document.getElementById('employeeGrid');
+            const statusFilter = document.getElementById('statusFilter').value;
+            const salaryFilter = document.getElementById('salaryFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            const today = new Date().toISOString().split('T')[0];
+
+            let filtered = employees.filter(emp => {
+                const matchesSearch = emp.name.toLowerCase().includes(searchTerm);
+                const isAbsentToday = emp.absenceDates.includes(today);
+                
+                let matchesStatus = true;
+                if (statusFilter === 'present') matchesStatus = !isAbsentToday;
+                if (statusFilter === 'absent') matchesStatus = isAbsentToday;
+
+                let matchesSalary = true;
+                if (salaryFilter === 'paid') matchesSalary = emp.salaryPaid;
+                if (salaryFilter === 'unpaid') matchesSalary = !emp.salaryPaid;
+
+                return matchesSearch && matchesStatus && matchesSalary;
+            });
+
+            grid.innerHTML = filtered.map(emp => {
+                const isAbsentToday = emp.absenceDates.includes(today);
+                return `
+                    <div class="employee-card">
+                        <div class="employee-header">
+                            <div class="employee-name">${emp.name}</div>
+                            <span class="status-badge ${isAbsentToday ? 'status-absent' : 'status-present'}">
+                                ${isAbsentToday ? 'Absent' : 'Present'}
+                            </span>
+                        </div>
+                        <div class="employee-position">${emp.position}</div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-primary" style="flex: 1; padding: 8px;" onclick="openAbsenceModal(${emp.id})">
+                                Mark Absence
+                            </button>
+                            <button class="btn-${emp.salaryPaid ? 'danger' : 'success'}" style="flex: 1; padding: 8px;" onclick="toggleSalary(${emp.id})">
+                                ${emp.salaryPaid ? 'Mark Unpaid' : 'Mark Paid'}
+                            </button>
+                        </div>
+
+                        <div class="salary-status">
+                            <span>💰 Salary (${emp.salary} EGP):</span>
+                            <span class="${emp.salaryPaid ? 'salary-paid' : 'salary-unpaid'}">
+                                ${emp.salaryPaid ? '✓ Paid' : '✗ Unpaid'}
+                            </span>
+                        </div>
+
+                        ${emp.absenceDates.length > 0 ? `
+                            <div class="absence-days">
+                                <strong>Absent on:</strong><br>
+                                ${emp.absenceDates.slice(-5).reverse().join(', ')}
+                            </div>
+                        ` : ''}
+
+                        <button class="btn-danger" style="width: 100%; margin-top: 15px; padding: 8px;" onclick="deleteEmployee(${emp.id})">
+                            Delete Employee
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            document.getElementById('totalEmployees').textContent = employees.length;
+            
+            const absentToday = employees.filter(emp => emp.absenceDates.includes(today)).length;
+            document.getElementById('absentCount').textContent = absentToday;
+            document.getElementById('presentCount').textContent = employees.length - absentToday;
+            
+            const paidCount = employees.filter(emp => emp.salaryPaid).length;
+            document.getElementById('paidCount').textContent = paidCount;
+        }
+
+        function openAddEmployeeModal() {
+            document.getElementById('addEmployeeModal').classList.add('active');
+        }
+
+        function closeAddEmployeeModal() {
+            document.getElementById('addEmployeeModal').classList.remove('active');
+            document.getElementById('employeeName').value = '';
+            document.getElementById('employeePosition').value = '';
+            document.getElementById('employeeSalary').value = '';
+        }
+
+        function addEmployee() {
+            const name = document.getElementById('employeeName').value.trim();
+            const position = document.getElementById('employeePosition').value.trim();
+            const salary = document.getElementById('employeeSalary').value;
+
+            if (!name || !position || !salary) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const newEmployee = {
+                id: Date.now(),
+                name,
+                position,
+                salary: parseFloat(salary),
+                salaryPaid: false,
+                absenceDates: []
+            };
+
+            employees.push(newEmployee);
+            saveData();
+            renderEmployees();
+            updateStats();
+            closeAddEmployeeModal();
+        }
+
+        function openAbsenceModal(id) {
+            currentEmployeeId = id;
+            document.getElementById('absenceDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('absenceModal').classList.add('active');
+        }
+
+        function closeAbsenceModal() {
+            document.getElementById('absenceModal').classList.remove('active');
+            currentEmployeeId = null;
+        }
+
+        function markAbsence() {
+            const date = document.getElementById('absenceDate').value;
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+
+            const employee = employees.find(emp => emp.id === currentEmployeeId);
+            if (employee && !employee.absenceDates.includes(date)) {
+                employee.absenceDates.push(date);
+                saveData();
+                renderEmployees();
+                updateStats();
+            }
+            closeAbsenceModal();
+        }
+
+        function toggleSalary(id) {
+            const employee = employees.find(emp => emp.id === id);
+            if (employee) {
+                employee.salaryPaid = !employee.salaryPaid;
+                saveData();
+                renderEmployees();
+                updateStats();
+            }
+        }
+
+        function deleteEmployee(id) {
+            if (confirm('Are you sure you want to delete this employee?')) {
+                employees = employees.filter(emp => emp.id !== id);
+                saveData();
+                renderEmployees();
+                updateStats();
+            }
+        }
+
+        function filterEmployees() {
+            renderEmployees();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(employees, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'employee-data.json';
+            link.click();
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                employees = [];
+                saveData();
+                renderEmployees();
+                updateStats();
+            }
+        }
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
